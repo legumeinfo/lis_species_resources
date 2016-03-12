@@ -1,0 +1,178 @@
+<?php
+// $Id$
+
+// lis_species_resources
+
+// Sudhansu Dash
+// 2016 Mar 10
+
+
+/**
+ * Implements hook_menu().
+ */
+
+function lis_species_resources_menu() {
+  $items = array();
+  $items['lis_species_resources'] = array( //this creates a URL
+    'title' => 'Available resources for legume species', //page title
+    'description' => 'Module to create html for the lis species page and genome page listing the resources available for a species/genome from an excel sheet.',
+    'page callback' => lis_species_resources_page_callback, //this fn is called when page accessed. For form, use drupal_get_form
+    //'page arguments' => array('grin_acc_query_form'), //form name here; no need if page callback fn() doesn't need it.
+    'access callback' => TRUE,
+  );
+  return $items;
+}
+
+
+/**
+ * Implements hook_theme().
+ */
+
+
+function lis_species_resources_theme() {
+  return array(
+    'lis_species_resources_page_template' => array(  // this array name to be used in theme() fn.
+    'template' => 'lis_species_resources_page',  //template file lis_species_resources_page.tpl.php
+    //'variables' => array('var1 => NULL', 'var2 => NULL' ),
+    ),  //array page_template
+  );  // array return
+}    
+
+/**
+ * Implements page callback.
+ */
+
+function lis_species_resources_page_callback() {
+    
+    // load phpexcel drupal module
+    module_load_include('inc', 'phpexcel');  
+    // The path to the excel file
+    $module_path = drupal_get_path('module', 'lis_species_resources');
+    //drupal_set_message(t($module_path));
+    $species_resources_path = "files/lis_species_resources";
+    $excel_file = "lis_species_features.xlsx";
+    $excel_worksheet = "sheet1_species"; //name of specific worksheet in the excel file
+    //$excel_file_path = $module_path."/".$excel_file; 
+    $excel_file_path = $species_resources_path."/".$excel_file; 
+    drupal_set_message(t("\$excel_file_path: ".$excel_file_path));
+    
+    
+    //IMPORT
+        // phpexcel_import('path-to-excel',TRUE,TRUE)
+            //FALSE in 2nd arg implies the header row is read as just another row; 2nd arg if TRUE
+        //EXAMPLE for importing specific worksheet:
+           //phpexcel_import('path/to/file.xls', TRUE, TRUE, array('setLoadSheetsOnly' => array('My sheet')));
+        //$excel_array = phpexcel_import($excel_file_path,FALSE,TRUE);  //now excel file content in an array
+        //$excel_array = phpexcel_import($excel_file_path,TRUE,TRUE);  //now excel file content in an array
+    
+    //Importing a specific worksheet
+    $excel_array = phpexcel_import($excel_file_path,TRUE,TRUE, array('setLoadSheetsOnly' => array($excel_worksheet)));  //now excel file content in an associative array with keys as in 1st row of sheet
+    $excel_array = $excel_array[$excel_worksheet];  //entered into the next evel(worksheet) in the array
+    
+    //Ensure it is an array or create error
+    if (is_array($excel_array)) {
+        drupal_set_message(t("OK: File content now in array"));
+        
+        //extract the keys: (Not using them currently)
+        $sheet_keys = array_keys($excel_array[0]); //array
+            //print_r($sheet_keys);
+        
+        $species_html = "";
+        
+        //Entering into the array row by row
+        foreach ($excel_array as $row) {
+            
+            //Skip rows with # in first column (comment rows)
+            if (preg_match("/\#/", $row['rowCode'])) {
+                continue;
+            }
+            
+            if ($row['rowCode'] == 1) {
+                    
+                
+                
+                //species subheading
+                $species_html .= "<dl>";
+                $species_html .= "<dt>"."<i>".$row['sciName']."</i>"."  "."(<b>".$row['commonName']."</b>)"; //species subheading
+                
+                //About
+                //http://localhost:8888/organism/Medicago/truncatula
+                $species_html .= " - "."<a  href=\""."/organism/".$row['genus']."/".$row['species']."\"".">"."About"."</a>"."</dt>";
+                
+                //browse genome
+                if ($row['gbrowseKey'] || $row['jbrowseKey']) {
+                    $species_html .= "<dd>Browse genome:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                
+                    if ($row['gbrowseKey']) {
+                        $species_html .= "".makeGbrowseKey($row['gbrowseKey'])."";
+                    } //if-gbrowse
+                    $species_html .= "&nbsp;&nbsp;&nbsp;";
+                    if ($row['jbrowseKey']) {
+                        $species_html .= "".makeJbrowseKey($row['jbrowseKey'])."";
+                    } //if-gbrowse
+                    
+                    $species_html .= "</dd>";
+                } //if-genomes
+                
+                //Maps
+                if ($row['mapsKey']) {
+                    $species_html .= "<dd>"."<a  href="."\""."traits_maps#".$row['mapsKey']."\"".">"."Maps"."</a>"."</dd>";
+                }
+              
+                //Genes
+                //http://localhost:8888/search/gene?abbreviation=Cic.+arietinum
+                if ($row['genesKey']) {
+                    $species_html .= "<dd>"."<a  href="."\""."search/gene?abbreviation=".$row['genesKey']."\"".">"."Genes"."</a>"."</dd>";
+                }
+              
+              
+                $species_html .= "</dl>";
+                
+            } //if rowcode =1 
+          
+        }  //foreach row
+        //>>>>>>>>>>>>
+        
+      
+    }
+    else {
+      drupal_set_message(t("Oops ! An error occured in accesing ".$excel_file." or some errors!"), 'error');
+    }
+  
+    //echo gettype($excel_array);
+    
+    echo "<pre>";
+    print_r($excel_array);
+    echo "</pre>";
+
+
+
+    
+    
+  //===========================================================================
+  // array name in hook_theme() that specifies page template file.
+  return theme ('lis_species_resources_page_template', array('excel_array' => $excel_array, 'worksheet_array' => $worksheet_array, 'headers_array' => $headers_array, 'species_html' => $species_html)); 
+}
+
+/*
+ *Helper functions
+ *
+ */
+function makeGbrowseKey ($string) {
+            $string = "<a href=\"/gbrowse_".$string."\">"."GBrowse"."</a>";
+            return $string;
+        }
+        
+function makeJbrowseKey ($string) {
+            $string = "<a href=\"/genomes/jbrowse/?data=".$string."\">"."JBrowse"."</a>";
+            return $string;
+        }
+
+
+//  SCRATCH PAD
+//=============
+
+/*
+ 
+
+*/

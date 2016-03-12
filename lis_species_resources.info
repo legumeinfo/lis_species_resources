@@ -1,0 +1,10 @@
+name = lis_species_resources
+description = Module to create html for the lis species page and genome page listing the resources available for a species/genome from an excel sheet.
+core = 7.x
+files[] = lis_species_resources.module
+
+package = LIS
+;dependencies[] = 
+;dependencies[] = 
+;files[] = 
+;configure = 
