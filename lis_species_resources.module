@@ -124,8 +124,32 @@ function lis_species_resources_page_callback() {
                 if ($row['genesKey']) {
                     $species_html .= "<dd>"."<a  href="."\""."search/gene?abbreviation=".$row['genesKey']."\"".">"."Genes"."</a>"."</dd>";
                 }
-              
-              
+                
+		//QTL
+		//http://localhost:5666/search/qtl?organism=Phaseolus+vulgaris
+                if ($row['QTL'])  {
+		    $species_html .= "<dd>"."<a  href="."\""."search/qtl?organism=".$row['genus']."+".$row['species']."\"".">"."QTL"."</a>"."</dd>";
+		}
+                
+                //Extra1
+		if ($row['extra1']) {
+		$parts = explode ('::',$row['extra1'] );
+		$label = $parts[0];
+		$link = $parts[1];
+		$species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+		}
+                
+		//Extra2
+		if ($row['extra2']) {
+		$parts = explode ('::',$row['extra2'] );
+		$label = $parts[0];
+		$link = $parts[1];
+		$species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+		}
+             
+
+
+
                 $species_html .= "</dl>";
                 
             } //if rowcode =1 

@@ -1,4 +1,14 @@
 <!-- Title and guide text  -->
+
+<style> 
+  .newspaper_col {
+   -webkit-columns: 100px 2; /* Chrome, Safari, Opera */
+   -moz-columns: 100px 2; /* Firefox */
+    columns: 100px 2;
+	    }
+</style>
+
+
 <div>
   <h1>Available resources for legume species at LIS</h1>
   <span></span>
@@ -21,7 +31,7 @@
     ?>
 </div>
 
-<div id="speciescontent">
+<div id="speciescontent"   class="newspaper_col">
     <?php
          echo $species_html;
     ?>
