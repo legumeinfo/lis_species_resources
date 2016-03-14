@@ -54,7 +54,7 @@ function lis_species_resources_page_callback() {
     $excel_worksheet = "sheet1_species"; //name of specific worksheet in the excel file
     //$excel_file_path = $module_path."/".$excel_file; 
     $excel_file_path = $species_resources_path."/".$excel_file; 
-    drupal_set_message(t("\$excel_file_path: ".$excel_file_path));
+    drupal_set_message(t("\$excel_file_path: "."webroot/".$excel_file_path));
     
     
     //IMPORT
@@ -92,7 +92,7 @@ function lis_species_resources_page_callback() {
                 
                 
                 //species subheading
-                $species_html .= "<dl>";
+                $species_html .= "<dl  class='dl_no_break'>";
                 $species_html .= "<dt>"."<i>".$row['sciName']."</i>"."  "."(<b>".$row['commonName']."</b>)"; //species subheading
                 
                 //About
@@ -146,7 +146,31 @@ function lis_species_resources_page_callback() {
 		$link = $parts[1];
 		$species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
 		}
-             
+                
+		//Extra3
+		if ($row['extra3']) {
+		$parts = explode ('::',$row['extra3'] );
+		$label = $parts[0];
+		$link = $parts[1];
+		$species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+		}
+
+		//Extra4
+		if ($row['extra4']) {
+		$parts = explode ('::',$row['extra4'] );
+		$label = $parts[0];
+		$link = $parts[1];
+		$species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+		}
+
+		//Extra5
+		if ($row['extra5']) {
+		$parts = explode ('::',$row['extra5'] );
+		$label = $parts[0];
+		$link = $parts[1];
+		$species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+		}
+
 
 
 
