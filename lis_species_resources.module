@@ -140,10 +140,11 @@ function lis_species_resources_page_callback() {
     }
   
     //echo gettype($excel_array);
-    
+    /*
     echo "<pre>";
     print_r($excel_array);
     echo "</pre>";
+    */
 
 
 
