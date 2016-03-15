@@ -13,13 +13,23 @@
 
 function lis_species_resources_menu() {
   $items = array();
-  $items['lis_species_resources'] = array( //this creates a URL
+  $items['lis_species_resources'] = array( //this creates a URL for the species page
     'title' => 'Available resources for legume species', //page title
-    'description' => 'Module to create html for the lis species page and genome page listing the resources available for a species/genome from an excel sheet.',
+    'description' => 'Creates html for the lis species page listing the resources available for a species from an excel sheet.',
     'page callback' => lis_species_resources_page_callback, //this fn is called when page accessed. For form, use drupal_get_form
     //'page arguments' => array('grin_acc_query_form'), //form name here; no need if page callback fn() doesn't need it.
     'access callback' => TRUE,
   );
+
+  $items['lis_species_resources_genomes'] = array( //this creates a URL for genome page
+    'title' => 'Genome Browsers at LIS and sister sites', //page title
+    'description' => 'Creates html for the lis genomes page listing the genome links per species from the same excel sheet.',
+    'page callback' => lis_species_resources_genomes_page_callback, //this fn is called when page accessed. For form, use drupal_get_form
+    //'page arguments' => array('grin_acc_query_form'), //form name here; no need if page callback fn() doesn't need it.
+    'access callback' => TRUE,
+  );
+
+
   return $items;
 }
 
@@ -35,6 +45,12 @@ function lis_species_resources_theme() {
     'template' => 'lis_species_resources_page',  //template file lis_species_resources_page.tpl.php
     //'variables' => array('var1 => NULL', 'var2 => NULL' ),
     ),  //array page_template
+    
+    'lis_species_resources_genomes_page_template' => array(  // this array name to be used in theme() fn.
+    'template' => 'lis_species_resources_genomes_page',  //template file lis_species_resources_page.tpl.php
+    //'variables' => array('var1 => NULL', 'var2 => NULL' ),
+    ),  //array page_template
+
   );  // array return
 }    
 
@@ -201,7 +217,184 @@ function lis_species_resources_page_callback() {
   //===========================================================================
   // array name in hook_theme() that specifies page template file.
   return theme ('lis_species_resources_page_template', array('excel_array' => $excel_array, 'worksheet_array' => $worksheet_array, 'headers_array' => $headers_array, 'species_html' => $species_html)); 
+
+
 }
+
+
+/*  2nd callback for genome */
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+/**
+* Implements page callback. genomes page
+*/
+
+function lis_species_resources_genomes_page_callback() {
+
+// load phpexcel drupal module
+module_load_include('inc', 'phpexcel');  
+// The path to the excel file
+$module_path = drupal_get_path('module', 'lis_species_resources');
+//drupal_set_message(t($module_path));
+$species_resources_path = "files/lis_species_resources";
+$excel_file = "lis_species_features.xlsx";
+$excel_worksheet = "sheet1_species"; //name of specific worksheet in the excel file
+//$excel_file_path = $module_path."/".$excel_file; 
+$excel_file_path = $species_resources_path."/".$excel_file; 
+drupal_set_message(t("\$excel_file_path: "."webroot/".$excel_file_path." (Exact same as the species page excel file)."));
+
+
+//IMPORT
+    // phpexcel_import('path-to-excel',TRUE,TRUE)
+	//FALSE in 2nd arg implies the header row is read as just another row; 2nd arg if TRUE
+    //EXAMPLE for importing specific worksheet:
+       //phpexcel_import('path/to/file.xls', TRUE, TRUE, array('setLoadSheetsOnly' => array('My sheet')));
+    //$excel_array = phpexcel_import($excel_file_path,FALSE,TRUE);  //now excel file content in an array
+    //$excel_array = phpexcel_import($excel_file_path,TRUE,TRUE);  //now excel file content in an array
+
+//Importing a specific worksheet
+$excel_array = phpexcel_import($excel_file_path,TRUE,TRUE, array('setLoadSheetsOnly' => array($excel_worksheet)));  //now excel file content in an associative array with keys as in 1st row of sheet
+$excel_array = $excel_array[$excel_worksheet];  //entered into the next evel(worksheet) in the array
+
+//Ensure it is an array or create error
+if (is_array($excel_array)) {
+    drupal_set_message(t("OK: File content now in array"));
+    
+    //extract the keys: (Not using them currently)
+    $sheet_keys = array_keys($excel_array[0]); //array
+	//print_r($sheet_keys);
+    
+    $species_html = "<table>";
+    
+    //Entering into the array row by row
+    foreach ($excel_array as $row) {
+	
+	//Skip rows with # in first column (comment rows)
+	if (preg_match("/\#/", $row['rowCode'])) {
+	    continue;
+	}
+	
+	if ($row['rowCode'] == 1) {
+		
+	    
+	    
+	    //species subheading
+	    $species_html .= "<tr>";
+	    $species_html .= "<td>"."<i>".$row['sciName']."</i>"."  "."(<b>".$row['commonName']."</b>)"."</td>"; //species subheading
+	    
+	   /* //About
+	    //http://localhost:8888/organism/Medicago/truncatula
+	    $species_html .= " - "."<a  href=\""."/organism/".$row['genus']."/".$row['species']."\"".">"."About"."</a>"."</dt>";*/
+	    
+	    //browse genome
+	   
+		if ($row['gbrowseKey']) {
+		    $species_html .= "<td>".makeGbrowseKey($row['gbrowseKey'])."</td>";
+		} //if-gbrowse
+		$species_html .= "&nbsp;&nbsp;&nbsp;";
+		if ($row['jbrowseKey']) {
+		    $species_html .= "<td>".makeJbrowseKey($row['jbrowseKey'])."</td>";
+		} //if-gbrowse
+		
+	/*	$species_html .= "</dd>";*/
+	    
+	    
+	  /*  //Maps
+	    if ($row['mapsKey']) {
+		$species_html .= "<dd>"."<a  href="."\""."traits_maps#".$row['mapsKey']."\"".">"."Maps"."</a>"."</dd>";
+	    }
+	  
+	    //Genes
+	    //http://localhost:8888/search/gene?abbreviation=Cic.+arietinum
+	    if ($row['genesKey']) {
+		$species_html .= "<dd>"."<a  href="."\""."search/gene?abbreviation=".$row['genesKey']."\"".">"."Genes"."</a>"."</dd>";
+	    }
+	    
+	    //QTL
+	    //http://localhost:5666/search/qtl?organism=Phaseolus+vulgaris
+	    if ($row['QTL'])  {
+		$species_html .= "<dd>"."<a  href="."\""."search/qtl?organism=".$row['genus']."+".$row['species']."\"".">"."QTL"."</a>"."</dd>";
+	    }    */
+	    
+	    //Extra1
+	    if ($row['extra1']) {
+	    $parts = explode ('::',$row['extra1'] );
+	    $label = $parts[0];
+	    $link = $parts[1];
+	    $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+	    }
+	    
+	    //Extra2
+	    if ($row['extra2']) {
+	    $parts = explode ('::',$row['extra2'] );
+	    $label = $parts[0];
+	    $link = $parts[1];
+	    $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+	    }
+	    
+	    //Extra3
+	    if ($row['extra3']) {
+	    $parts = explode ('::',$row['extra3'] );
+	    $label = $parts[0];
+	    $link = $parts[1];
+	    $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+	    }
+
+	    //Extra4
+	    if ($row['extra4']) {
+	    $parts = explode ('::',$row['extra4'] );
+	    $label = $parts[0];
+	    $link = $parts[1];
+	    $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+	    }
+
+	    //Extra5
+	    if ($row['extra5']) {
+	    $parts = explode ('::',$row['extra5'] );
+	    $label = $parts[0];
+	    $link = $parts[1];
+	    $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+	    }
+
+
+
+
+	    $species_html .= "</dl>";
+	    
+	} //if rowcode =1 
+      
+    }  //foreach row
+    //>>>>>>>>>>>>
+        
+      
+    }
+    else {
+      drupal_set_message(t("Oops ! An error occured in accesing ".$excel_file." or some errors!"), 'error');
+    }
+  
+    //echo gettype($excel_array);
+    /*
+    echo "<pre>";
+    print_r($excel_array);
+    echo "</pre>";
+    */
+
+
+
+    
+    
+  //===========================================================================
+  // array name in hook_theme() that specifies page template file.
+  return theme ('lis_species_resources_genomes_page_template', array('excel_array' => $excel_array, 'worksheet_array' => $worksheet_array, 'headers_array' => $headers_array, 'species_html' => $species_html)); 
+
+
+}
+
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
 
 /*
  *Helper functions
