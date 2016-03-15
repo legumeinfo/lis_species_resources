@@ -87,7 +87,7 @@ function lis_species_resources_page_callback() {
     
     //Ensure it is an array or create error
     if (is_array($excel_array)) {
-        drupal_set_message(t("OK: File content now in array"));
+        drupal_set_message(t("OK: now in array"));  //File content now in array
         
         //extract the keys: (Not using them currently)
         $sheet_keys = array_keys($excel_array[0]); //array
@@ -147,14 +147,38 @@ function lis_species_resources_page_callback() {
 		    $species_html .= "<dd>"."<a  href="."\""."search/qtl?organism=".$row['genus']."+".$row['species']."\"".">"."QTL"."</a>"."</dd>";
 		}
                 
-                //Extra1
+                //ExternalGenome1
+		if ($row['externalGenome1']) {
+		$parts = explode ('::',$row['externalGenome1'] );
+		$label = $parts[0];
+		$link = $parts[1];
+		$species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+		}
+                
+		//ExternalGenome2
+		if ($row['externalGenome2']) {
+		$parts = explode ('::',$row['externalGenome2'] );
+		$label = $parts[0];
+		$link = $parts[1];
+		$species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+		}
+                
+		//ExternalGenome3
+		if ($row['externalGenome3']) {
+		$parts = explode ('::',$row['externalGenome3'] );
+		$label = $parts[0];
+		$link = $parts[1];
+		$species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+		}
+
+		//Extra1
 		if ($row['extra1']) {
 		$parts = explode ('::',$row['extra1'] );
 		$label = $parts[0];
 		$link = $parts[1];
 		$species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
 		}
-                
+
 		//Extra2
 		if ($row['extra2']) {
 		$parts = explode ('::',$row['extra2'] );
@@ -162,26 +186,10 @@ function lis_species_resources_page_callback() {
 		$link = $parts[1];
 		$species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
 		}
-                
-		//Extra3
+        
+        //Extra3
 		if ($row['extra3']) {
 		$parts = explode ('::',$row['extra3'] );
-		$label = $parts[0];
-		$link = $parts[1];
-		$species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
-		}
-
-		//Extra4
-		if ($row['extra4']) {
-		$parts = explode ('::',$row['extra4'] );
-		$label = $parts[0];
-		$link = $parts[1];
-		$species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
-		}
-
-		//Extra5
-		if ($row['extra5']) {
-		$parts = explode ('::',$row['extra5'] );
 		$label = $parts[0];
 		$link = $parts[1];
 		$species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
@@ -257,112 +265,97 @@ $excel_array = $excel_array[$excel_worksheet];  //entered into the next evel(wor
 
 //Ensure it is an array or create error
 if (is_array($excel_array)) {
-    drupal_set_message(t("OK: File content now in array"));
+    drupal_set_message(t("OK: now in array")); // file content now in array
     
     //extract the keys: (Not using them currently)
     $sheet_keys = array_keys($excel_array[0]); //array
 	//print_r($sheet_keys);
     
-    $species_html = "<table>";
+    $genomes_html = "<table>";
     
     //Entering into the array row by row
     foreach ($excel_array as $row) {
 	
 	//Skip rows with # in first column (comment rows)
-	if (preg_match("/\#/", $row['rowCode'])) {
-	    continue;
-	}
+        if (preg_match("/\#/", $row['rowCode'])) {
+            continue;
+        }
 	
-	if ($row['rowCode'] == 1) {
-		
-	    
-	    
-	    //species subheading
-	    $species_html .= "<tr>";
-	    $species_html .= "<td>"."<i>".$row['sciName']."</i>"."  "."(<b>".$row['commonName']."</b>)"."</td>"; //species subheading
-	    
-	   /* //About
-	    //http://localhost:8888/organism/Medicago/truncatula
-	    $species_html .= " - "."<a  href=\""."/organism/".$row['genus']."/".$row['species']."\"".">"."About"."</a>"."</dt>";*/
-	    
-	    //browse genome
-	   
-		if ($row['gbrowseKey']) {
-		    $species_html .= "<td>".makeGbrowseKey($row['gbrowseKey'])."</td>";
-		} //if-gbrowse
-		$species_html .= "&nbsp;&nbsp;&nbsp;";
-		if ($row['jbrowseKey']) {
-		    $species_html .= "<td>".makeJbrowseKey($row['jbrowseKey'])."</td>";
-		} //if-gbrowse
-		
-	/*	$species_html .= "</dd>";*/
-	    
-	    
-	  /*  //Maps
-	    if ($row['mapsKey']) {
-		$species_html .= "<dd>"."<a  href="."\""."traits_maps#".$row['mapsKey']."\"".">"."Maps"."</a>"."</dd>";
-	    }
-	  
-	    //Genes
-	    //http://localhost:8888/search/gene?abbreviation=Cic.+arietinum
-	    if ($row['genesKey']) {
-		$species_html .= "<dd>"."<a  href="."\""."search/gene?abbreviation=".$row['genesKey']."\"".">"."Genes"."</a>"."</dd>";
-	    }
-	    
-	    //QTL
-	    //http://localhost:5666/search/qtl?organism=Phaseolus+vulgaris
-	    if ($row['QTL'])  {
-		$species_html .= "<dd>"."<a  href="."\""."search/qtl?organism=".$row['genus']."+".$row['species']."\"".">"."QTL"."</a>"."</dd>";
-	    }    */
-	    
-	    //Extra1
-	    if ($row['extra1']) {
-	    $parts = explode ('::',$row['extra1'] );
-	    $label = $parts[0];
-	    $link = $parts[1];
-	    $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
-	    }
-	    
-	    //Extra2
-	    if ($row['extra2']) {
-	    $parts = explode ('::',$row['extra2'] );
-	    $label = $parts[0];
-	    $link = $parts[1];
-	    $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
-	    }
-	    
-	    //Extra3
-	    if ($row['extra3']) {
-	    $parts = explode ('::',$row['extra3'] );
-	    $label = $parts[0];
-	    $link = $parts[1];
-	    $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
-	    }
-
-	    //Extra4
-	    if ($row['extra4']) {
-	    $parts = explode ('::',$row['extra4'] );
-	    $label = $parts[0];
-	    $link = $parts[1];
-	    $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
-	    }
-
-	    //Extra5
-	    if ($row['extra5']) {
-	    $parts = explode ('::',$row['extra5'] );
-	    $label = $parts[0];
-	    $link = $parts[1];
-	    $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
-	    }
-
-
-
-
-	    $species_html .= "</dl>";
-	    
-	} //if rowcode =1 
+        if ($row['rowCode'] == 1) {
+            
+            
+            
+            //species subheading
+            $genomes_html .= "<tr>";
+            $genomes_html .= "<td style='width:200px;'>"."<i>".$row['sciName']."</i>"."  "."(<b>".$row['commonName']."</b>)"."</td>"; //species subheading
+            
+           /* //About
+            //http://localhost:8888/organism/Medicago/truncatula
+            $species_html .= " - "."<a  href=\""."/organism/".$row['genus']."/".$row['species']."\"".">"."About"."</a>"."</dt>";*/
+            
+            //browse genome
+           
+            if ($row['gbrowseKey']) {
+                $genomes_html .= "<td style='width:120px'>".makeGbrowseKey($row['gbrowseKey'])."</td>";
+            } //if-gbrowse
+            $genomes_html .= "&nbsp;&nbsp;&nbsp;";
+            
+            if ($row['jbrowseKey']) {
+                $genomes_html .= "<td style='width:120px'>".makeJbrowseKey($row['jbrowseKey'])."</td>";
+            } //if-gbrowse
+            
+        /*	$species_html .= "</dd>";*/
+            
+            
+          /*  //Maps
+            if ($row['mapsKey']) {
+            $species_html .= "<dd>"."<a  href="."\""."traits_maps#".$row['mapsKey']."\"".">"."Maps"."</a>"."</dd>";
+            }
+          
+            //Genes
+            //http://localhost:8888/search/gene?abbreviation=Cic.+arietinum
+            if ($row['genesKey']) {
+            $species_html .= "<dd>"."<a  href="."\""."search/gene?abbreviation=".$row['genesKey']."\"".">"."Genes"."</a>"."</dd>";
+            }
+            
+            //QTL
+            //http://localhost:5666/search/qtl?organism=Phaseolus+vulgaris
+            if ($row['QTL'])  {
+            $species_html .= "<dd>"."<a  href="."\""."search/qtl?organism=".$row['genus']."+".$row['species']."\"".">"."QTL"."</a>"."</dd>";
+            }    */
+            
+            //Extra1
+            if ($row['externalGenome1']) {
+            $parts = explode ('::',$row['externalGenome1'] );
+            $label = $parts[0];
+            $link = $parts[1];
+            $genomes_html .= "<td style='width:180px'>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</td>";
+            }
+            
+            //Extra2
+            if ($row['externalGenome2']) {
+            $parts = explode ('::',$row['externalGenome2'] );
+            $label = $parts[0];
+            $link = $parts[1];
+            $genomes_html .= "<td>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</td>";
+            }
+            
+            //Extra3
+            if ($row['externalGenome3']) {
+            $parts = explode ('::',$row['externalGenome3'] );
+            $label = $parts[0];
+            $link = $parts[1];
+            $genomes_html .= "<td>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</td>";
+            }
+    
+    
+            $genomes_html .= "</tr>";
+            
+        } //if rowcode =1 
       
     }  //foreach row
+    
+    $genomes_html .= "</table>";
     //>>>>>>>>>>>>
         
       
@@ -384,7 +377,7 @@ if (is_array($excel_array)) {
     
   //===========================================================================
   // array name in hook_theme() that specifies page template file.
-  return theme ('lis_species_resources_genomes_page_template', array('excel_array' => $excel_array, 'worksheet_array' => $worksheet_array, 'headers_array' => $headers_array, 'species_html' => $species_html)); 
+  return theme ('lis_species_resources_genomes_page_template', array('excel_array' => $excel_array, 'worksheet_array' => $worksheet_array, 'headers_array' => $headers_array, 'species_html' => $genomes_html)); 
 
 
 }
