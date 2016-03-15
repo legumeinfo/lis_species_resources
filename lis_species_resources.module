@@ -287,7 +287,7 @@ if (is_array($excel_array)) {
             
             //species subheading
             $genomes_html .= "<tr>";
-            $genomes_html .= "<td style='width:200px;'>"."<i>".$row['sciName']."</i>"."  "."(<b>".$row['commonName']."</b>)"."</td>"; //species subheading
+            $genomes_html .= "<td style='width:100px;'>"."<i>".$row['sciName']."</i>"." <br/> "."(<b>".$row['commonName']."</b>)"."</td>"; //species subheading
             
            /* //About
             //http://localhost:8888/organism/Medicago/truncatula
@@ -296,12 +296,12 @@ if (is_array($excel_array)) {
             //browse genome
            
             if ($row['gbrowseKey']) {
-                $genomes_html .= "<td style='width:120px'>".makeGbrowseKey($row['gbrowseKey'])."</td>";
+                $genomes_html .= "<td style='width:100px'>".makeGbrowseKey($row['gbrowseKey'])." (".$row['jbrowseKey'].")"."</td>";
             } //if-gbrowse
             $genomes_html .= "&nbsp;&nbsp;&nbsp;";
             
             if ($row['jbrowseKey']) {
-                $genomes_html .= "<td style='width:120px'>".makeJbrowseKey($row['jbrowseKey'])."</td>";
+                $genomes_html .= "<td style='width:100px'>".makeJbrowseKey($row['jbrowseKey'])." (".$row['jbrowseKey'].")"."</td>";
             } //if-gbrowse
             
         /*	$species_html .= "</dd>";*/
