@@ -130,70 +130,70 @@ function lis_species_resources_page_callback() {
                     $species_html .= "</dd>";
                 } //if-genomes
                 
-                //Maps
-                if ($row['mapsKey']) {
-                    $species_html .= "<dd>"."<a  href="."\""."traits_maps#".$row['mapsKey']."\"".">"."Maps"."</a>"."</dd>";
-                }
-              
                 //Genes
                 //http://localhost:8888/search/gene?abbreviation=Cic.+arietinum
                 if ($row['genesKey']) {
                     $species_html .= "<dd>"."<a  href="."\""."search/gene?abbreviation=".$row['genesKey']."\"".">"."Genes"."</a>"."</dd>";
                 }
                 
-		//QTL
-		//http://localhost:5666/search/qtl?organism=Phaseolus+vulgaris
+                //Maps
+                if ($row['mapsKey']) {
+                    $species_html .= "<dd>"."<a  href="."\""."traits_maps#".$row['mapsKey']."\"".">"."Maps"."</a>"."</dd>";
+                }
+
+        		//QTL
+                //http://localhost:5666/search/qtl?organism=Phaseolus+vulgaris
                 if ($row['QTL'])  {
-		    $species_html .= "<dd>"."<a  href="."\""."search/qtl?organism=".$row['genus']."+".$row['species']."\"".">"."QTL"."</a>"."</dd>";
-		}
+                    $species_html .= "<dd>"."<a  href="."\""."search/qtl?organism=".$row['genus']."+".$row['species']."\"".">"."QTL"."</a>"."</dd>";
+                }
                 
                 //ExternalGenome1
-		if ($row['externalGenome1']) {
-		$parts = explode ('::',$row['externalGenome1'] );
-		$label = $parts[0];
-		$link = $parts[1];
-		$species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
-		}
+                if ($row['externalGenome1']) {
+                    $parts = explode ('::',$row['externalGenome1'] );
+                    $label = $parts[0];
+                    $link = $parts[1];
+                    $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+                }
                 
-		//ExternalGenome2
-		if ($row['externalGenome2']) {
-		$parts = explode ('::',$row['externalGenome2'] );
-		$label = $parts[0];
-		$link = $parts[1];
-		$species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
-		}
-                
-		//ExternalGenome3
-		if ($row['externalGenome3']) {
-		$parts = explode ('::',$row['externalGenome3'] );
-		$label = $parts[0];
-		$link = $parts[1];
-		$species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
-		}
-
-		//Extra1
-		if ($row['extra1']) {
-		$parts = explode ('::',$row['extra1'] );
-		$label = $parts[0];
-		$link = $parts[1];
-		$species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
-		}
-
-		//Extra2
-		if ($row['extra2']) {
-		$parts = explode ('::',$row['extra2'] );
-		$label = $parts[0];
-		$link = $parts[1];
-		$species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
-		}
+                //ExternalGenome2
+                if ($row['externalGenome2']) {
+                    $parts = explode ('::',$row['externalGenome2'] );
+                    $label = $parts[0];
+                    $link = $parts[1];
+                    $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+                }
+                        
+                //ExternalGenome3
+                if ($row['externalGenome3']) {
+                    $parts = explode ('::',$row['externalGenome3'] );
+                    $label = $parts[0];
+                    $link = $parts[1];
+                    $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+                }
         
-        //Extra3
-		if ($row['extra3']) {
-		$parts = explode ('::',$row['extra3'] );
-		$label = $parts[0];
-		$link = $parts[1];
-		$species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
-		}
+                //Extra1
+                if ($row['extra1']) {
+                    $parts = explode ('::',$row['extra1'] );
+                    $label = $parts[0];
+                    $link = $parts[1];
+                    $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+                }
+        
+                //Extra2
+                if ($row['extra2']) {
+                    $parts = explode ('::',$row['extra2'] );
+                    $label = $parts[0];
+                    $link = $parts[1];
+                    $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+                }
+                
+                //Extra3
+                if ($row['extra3']) {
+                    $parts = explode ('::',$row['extra3'] );
+                    $label = $parts[0];
+                    $link = $parts[1];
+                    $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+                }
 
 
 
@@ -312,25 +312,6 @@ if (is_array($excel_array)) {
 
             } //if-jbrowse
             
-        /*	$species_html .= "</dd>";*/
-            
-            
-          /*  //Maps
-            if ($row['mapsKey']) {
-            $species_html .= "<dd>"."<a  href="."\""."traits_maps#".$row['mapsKey']."\"".">"."Maps"."</a>"."</dd>";
-            }
-          
-            //Genes
-            //http://localhost:8888/search/gene?abbreviation=Cic.+arietinum
-            if ($row['genesKey']) {
-            $species_html .= "<dd>"."<a  href="."\""."search/gene?abbreviation=".$row['genesKey']."\"".">"."Genes"."</a>"."</dd>";
-            }
-            
-            //QTL
-            //http://localhost:5666/search/qtl?organism=Phaseolus+vulgaris
-            if ($row['QTL'])  {
-            $species_html .= "<dd>"."<a  href="."\""."search/qtl?organism=".$row['genus']."+".$row['species']."\"".">"."QTL"."</a>"."</dd>";
-            }    */
             
             //Extra1
             if ($row['externalGenome1']) {
