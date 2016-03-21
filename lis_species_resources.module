@@ -70,7 +70,7 @@ function lis_species_resources_page_callback() {
     $excel_worksheet = "sheet1_species"; //name of specific worksheet in the excel file
     //$excel_file_path = $module_path."/".$excel_file; 
     $excel_file_path = $species_resources_path."/".$excel_file; 
-    drupal_set_message(t("\$excel_file_path: "."webroot/".$excel_file_path));
+    //drupal_set_message(t("\$excel_file_path: "."webroot/".$excel_file_path));
     
     
     //IMPORT
@@ -87,7 +87,7 @@ function lis_species_resources_page_callback() {
     
     //Ensure it is an array or create error
     if (is_array($excel_array)) {
-        drupal_set_message(t("OK: now in array"));  //File content now in array
+        //drupal_set_message(t("OK: now in array"));  //File content now in array
         
         //extract the keys: (Not using them currently)
         $sheet_keys = array_keys($excel_array[0]); //array
@@ -248,7 +248,7 @@ $excel_file = "lis_species_features.xlsx";
 $excel_worksheet = "sheet1_species"; //name of specific worksheet in the excel file
 //$excel_file_path = $module_path."/".$excel_file; 
 $excel_file_path = $species_resources_path."/".$excel_file; 
-drupal_set_message(t("\$excel_file_path: "."webroot/".$excel_file_path." (Exact same as the species page excel file)."));
+//drupal_set_message(t("\$excel_file_path: "."webroot/".$excel_file_path." (Exact same as the species page excel file)."));
 
 
 //IMPORT
@@ -265,13 +265,15 @@ $excel_array = $excel_array[$excel_worksheet];  //entered into the next evel(wor
 
 //Ensure it is an array or create error
 if (is_array($excel_array)) {
-    drupal_set_message(t("OK: now in array")); // file content now in array
+    //drupal_set_message(t("OK: now in array")); // file content now in array
     
     //extract the keys: (Not using them currently)
     $sheet_keys = array_keys($excel_array[0]); //array
 	//print_r($sheet_keys);
     
-    $genomes_html = "<table>";
+    //$genomes_html = "<table>";
+    $genomes_html = "";
+
     
     //Entering into the array row by row
     foreach ($excel_array as $row) {
@@ -280,15 +282,17 @@ if (is_array($excel_array)) {
         if (preg_match("/\#/", $row['rowCode'])) {
             continue;
         }
-	
-        if ($row['rowCode'] == 1) {
-            
+	        //Only consider rows starting with 1 (prevents blank spreadsheet rows from showing up)
+            //Skip rows that don't have gbrowse or jbrowse or externalGenome1
+        if ($row['rowCode'] == 1 && $row['gbrowseKey'] || $row['jbrowseKey'] || $row['externalGenome1']) {  
             
             
             //species subheading
-            $genomes_html .= "<tr>";
-            $genomes_html .= "<td style='width:100px;'>"."<i>".$row['sciName']."</i>"." <br/> "."(<b>".$row['commonName']."</b>)"."</td>"; //species subheading
-            
+            //$genomes_html .= "<tr>";
+            $genomes_html .= "<dl  class='dl_no_break'>";
+            //$genomes_html .= "<td style='width:100px;'>"."<i>".$row['sciName']."</i>"." <br/> "."(<b>".$row['commonName']."</b>)"."</td>"; //species subheading
+            $genomes_html .= "<dt>"."<i>".$row['sciName']."</i>"."  "."(<b>".$row['commonName']."</b>)"."</dt>"; //species subheading"
+
            /* //About
             //http://localhost:8888/organism/Medicago/truncatula
             $species_html .= " - "."<a  href=\""."/organism/".$row['genus']."/".$row['species']."\"".">"."About"."</a>"."</dt>";*/
@@ -296,13 +300,17 @@ if (is_array($excel_array)) {
             //browse genome
            
             if ($row['gbrowseKey']) {
-                $genomes_html .= "<td style='width:100px'>".makeGbrowseKey($row['gbrowseKey'])." (".$row['jbrowseKey'].")"."</td>";
+                //$genomes_html .= "<td style='width:100px'>".makeGbrowseKey($row['gbrowseKey'])." (".$row['jbrowseKey'].")"."</td>";
+                $genomes_html .= "<dd>".makeGbrowseKey($row['gbrowseKey'])." (".$row['jbrowseKey'].")"."</dd>";
+
             } //if-gbrowse
-            $genomes_html .= "&nbsp;&nbsp;&nbsp;";
+            //$genomes_html .= "&nbsp;&nbsp;&nbsp;";
             
             if ($row['jbrowseKey']) {
-                $genomes_html .= "<td style='width:100px'>".makeJbrowseKey($row['jbrowseKey'])." (".$row['jbrowseKey'].")"."</td>";
-            } //if-gbrowse
+                //$genomes_html .= "<td style='width:100px'>".makeJbrowseKey($row['jbrowseKey'])." (".$row['jbrowseKey'].")"."</td>";
+                  $genomes_html .= "<dd>".makeJbrowseKey($row['jbrowseKey'])." (".$row['jbrowseKey'].")"."</dd>";
+
+            } //if-jbrowse
             
         /*	$species_html .= "</dd>";*/
             
@@ -329,7 +337,9 @@ if (is_array($excel_array)) {
             $parts = explode ('::',$row['externalGenome1'] );
             $label = $parts[0];
             $link = $parts[1];
-            $genomes_html .= "<td style='width:180px'>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</td>";
+            //$genomes_html .= "<td style='width:180px'>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</td>";
+            $genomes_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+
             }
             
             //Extra2
@@ -337,7 +347,9 @@ if (is_array($excel_array)) {
             $parts = explode ('::',$row['externalGenome2'] );
             $label = $parts[0];
             $link = $parts[1];
-            $genomes_html .= "<td>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</td>";
+            //$genomes_html .= "<td>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</td>";
+            $genomes_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+
             }
             
             //Extra3
@@ -345,17 +357,21 @@ if (is_array($excel_array)) {
             $parts = explode ('::',$row['externalGenome3'] );
             $label = $parts[0];
             $link = $parts[1];
-            $genomes_html .= "<td>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</td>";
+            //$genomes_html .= "<td>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</td>";
+            $genomes_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+
             }
     
     
-            $genomes_html .= "</tr>";
+            //$genomes_html .= "</tr>";
+            $genomes_html .= "</dl>";
+
             
         } //if rowcode =1 
       
     }  //foreach row
     
-    $genomes_html .= "</table>";
+    //$genomes_html .= "</table>";
     //>>>>>>>>>>>>
         
       

@@ -28,7 +28,9 @@
 <hr/>
 <div id="debgMessage">
         <?php
-        //echo "<pre>";
+        //FOR DEBUG MESSGES IF ANY
+		
+		//echo "<pre>";
         //print_r($excel_array);
         //print_r($excel_array['sheet1_species'][1]);
         //print_r($headers_array);
@@ -42,10 +44,8 @@
     ?>
 </div>
 
-<div id="speciescontent">
-    <?php
-         echo $species_html;
-    ?>
+<div id="speciescontent"  class="newspaper_col">
+    <?php  echo $species_html;  ?>
 </div>    
 
 
