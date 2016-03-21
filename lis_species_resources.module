@@ -13,7 +13,8 @@
 
 function lis_species_resources_menu() {
   $items = array();
-  $items['lis_species_resources'] = array( //this creates a URL for the species page
+  $items['species'] = array( //this creates a URL for the species page
+  //$items['lis_species_resources'] = array( //this creates a URL for the species page
     'title' => 'Available resources for legume species', //page title
     'description' => 'Creates html for the lis species page listing the resources available for a species from an excel sheet.',
     'page callback' => lis_species_resources_page_callback, //this fn is called when page accessed. For form, use drupal_get_form
@@ -21,7 +22,9 @@ function lis_species_resources_menu() {
     'access callback' => TRUE,
   );
 
-  $items['lis_species_resources_genomes'] = array( //this creates a URL for genome page
+  //$items['lis_species_resources_genomes'] = array( //this creates a URL for genome page
+  $items['genomes'] = array( //this creates a URL for genome page
+
     'title' => 'Genome Browsers at LIS and sister sites', //page title
     'description' => 'Creates html for the lis genomes page listing the genome links per species from the same excel sheet.',
     'page callback' => lis_species_resources_genomes_page_callback, //this fn is called when page accessed. For form, use drupal_get_form
