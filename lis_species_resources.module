@@ -174,7 +174,12 @@ function lis_species_resources_page_callback() {
                     $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
                 }
         
-                //Extra1
+                //DataStore
+		if ($row['dataStore']) {
+		    $species_html .= "<dd>"."<a  href="."\""."data/public/".$row['genus']."_".$row['species']."/"."\"    ".">"."Download Data from Data Store"."</a>"."</dd>";
+		}
+		
+		//Extra1
                 if ($row['extra1']) {
                     $parts = explode ('::',$row['extra1'] );
                     $label = $parts[0];
@@ -393,8 +398,15 @@ if (is_array($excel_array)) {
  *Helper functions
  *
  */
+/*
+//old
 function makeGbrowseKey ($string) {
             $string = "<a href=\"/gbrowse_".$string."\">"."GBrowse"."</a>";
+            return $string;
+        }
+*/
+function makeGbrowseKey ($string) {
+            $string = "<a href=\"/genomes/gbrowse/".$string."\">"."GBrowse"."</a>";
             return $string;
         }
         
