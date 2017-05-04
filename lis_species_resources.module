@@ -175,9 +175,14 @@ function lis_species_resources_page_callback() {
                 }
         
                 //DataStore
-		if ($row['dataStore']) {
-		    $species_html .= "<dd>"."<a  href="."\""."data/public/".$row['genus']."_".$row['species']."/"."\"    ".">"."Download Data from Data Store"."</a>"."</dd>";
-		}
+                if ($row['dataStore']) {
+                    $species_html .= "<dd>"."<a  href="."\""."data/public/".$row['genus']."_".$row['species']."/"."\"    ".">"."Download Data from Data Store"."</a>"."</dd>";
+                }
+                
+                //Mines
+                if ($row['minesKey']) {
+                    $species_html .= "<dd>"."<a  target=\"_blank\"  href=https://mines.legumeinfo.org/".$row['minesKey']."/begin.do".">".$row['minesKey']."</a>"."</dd>";
+                }
 		
 		//Extra1
                 if ($row['extra1']) {
