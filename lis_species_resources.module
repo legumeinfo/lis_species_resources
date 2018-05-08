@@ -28,7 +28,7 @@ function lis_species_resources_menu() {
     'title' => 'Genome Browsers at LIS and sister sites', //page title
     'description' => 'Creates html for the lis genomes page listing the genome links per species from the same excel sheet.',
     //'page callback' => lis_species_resources_genomes_page_callback, //this fn is called when page accessed. For form, use drupal_get_form
-    'page callback' => lis_species_resources_genomes_page_callback2,
+    'page callback' => lis_species_resources_genomes_page_callback,
     
     //'page arguments' => array('grin_acc_query_form'), //form name here; no need if page callback fn() doesn't need it.
     'access callback' => TRUE,
