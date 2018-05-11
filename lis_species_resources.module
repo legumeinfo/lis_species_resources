@@ -214,8 +214,11 @@ function lis_species_resources_page_callback() {
                 
                 
                 //EXPRESSION DATASETS IF ANY
-                $sql_expr_datasets = "SELECT od.accession_no FROM ongenome.dataset AS od WHERE od.genome_id IN (SELECT og.genome_id FROM ongenome.genome AS og WHERE og.organism_id IN (SELECT oo.organism_id from ongenome.organism AS oo WHERE oo.genus="."'".$genus."'"." AND oo.species="."'".$species."'"."))";
-                $expr_datasets = db_query($sql_expr_datasets)->fetchCol();
+                //$sql_expr_datasets = "SELECT od.accession_no FROM ongenome.dataset AS od WHERE od.genome_id IN (SELECT og.genome_id FROM ongenome.genome AS og WHERE og.organism_id IN (SELECT oo.organism_id from ongenome.organism AS oo WHERE oo.genus="."'".$genus."'"." AND oo.species="."'".$species."'"."))";
+                $sql_expr_datasets = "SELECT od.accession_no FROM ongenome.dataset AS od WHERE od.genome_id IN (SELECT og.genome_id FROM ongenome.genome AS og WHERE og.organism_id IN (SELECT oo.organism_id from ongenome.organism AS oo WHERE oo.genus= :genus AND oo.species= :species))";
+                
+                
+                $expr_datasets = db_query($sql_expr_datasets, array(':genus' => $genus, ':species' => $species))->fetchCol();
                 //print gettype($expr_datasets);
                 //print_r( $expr_datasets);
                 if ($expr_datasets) { 
