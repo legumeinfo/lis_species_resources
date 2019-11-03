@@ -211,7 +211,30 @@ function lis_species_resources_page_callback() {
                     $link = $parts[1];
                     $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
                 }
-                
+ 
+ 		//Extra4
+                if ($row['extra4']) {
+                    $parts = explode ('::',$row['extra4'] );
+                    $label = $parts[0];
+                    $link = $parts[1];
+                    $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+                }
+                //Extra5
+                if ($row['extra5']) {
+                    $parts = explode ('::',$row['extra5'] );
+                    $label = $parts[0];
+                    $link = $parts[1];
+                    $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+                }
+ 
+		//Extra6
+                if ($row['extra6']) {
+                    $parts = explode ('::',$row['extra6'] );
+                    $label = $parts[0];
+                    $link = $parts[1];
+                    $species_html .= "<dd>"."<a  target=\"_blank\"  href="."\"".$link."\"".">".$label."</a>"."</dd>";
+                }
+ 
                 
                 //EXPRESSION DATASETS IF ANY
                 //$sql_expr_datasets = "SELECT od.accession_no FROM ongenome.dataset AS od WHERE od.genome_id IN (SELECT og.genome_id FROM ongenome.genome AS og WHERE og.organism_id IN (SELECT oo.organism_id from ongenome.organism AS oo WHERE oo.genus="."'".$genus."'"." AND oo.species="."'".$species."'"."))";
